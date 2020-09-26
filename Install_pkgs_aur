@@ -1,0 +1,18 @@
+#!/bin/bash
+red='\033[1;31m'
+nc='\033[0m'
+PKGS_Aur=(wps-office spotify timeshift timeshift-autosnap gnome-shell-extension-dash-to-dock gnome-shell-extension-desktop-icons-ng davinci-resolve eclipse-common eclipse-java whatsapp-nativefier-dark ttf-ms-fonts)
+printf "\n${red}--- Installing packages from the AUR  ---\n\n${nc}"
+cd ./data/aur/pikaur
+makepkg -si --noconfirm
+pikaur -S --noconfirm yaru-icon-theme
+cd ..
+cd ..
+cd ..
+cd ./data/aur/yaru
+makepkg -si --noconfirm
+for PKG in "${PKGS_Aur[@]}"; do
+pikaur -S --noconfirm $PKG
+done
+printf "\n${red}--- Done  ---\n\n${nc}"
+

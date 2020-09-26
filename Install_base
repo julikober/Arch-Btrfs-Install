@@ -1,0 +1,75 @@
+#!/bin/bash
+red='\033[1;31m'
+nc='\033[0m'
+DIR=$(dirname "$0")
+printf "Type in locale (E.g. en_US): "
+read locale
+printf "Type in your hostname: "
+read hostname
+printf "Type in your Timezone (E.g. Europe/London):  "
+read tz
+printf "Type in your Root Password: "
+read -s rootpasswd
+printf "\nType in your Username: "
+read user
+printf "Type in ${user}'s password: "
+read -s userpasswd
+printf "\n\n${red}--- Get fastest servers ---\n\n${nc}"
+
+pacman -Sy --noconfirm archlinux-keyring
+pacman -S --noconfirm reflector
+reflector --sort rate | sed -n 1,20p - > /etc/pacman.d/mirrorlist
+
+printf "\n${red}--- Installing the base system ---\n\n${nc}"
+pacstrap /mnt base linux linux-firmware nano efibootmgr grub grub-btrfs networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers reflector cron gdm xorg gnome nvidia nvidia-utils nvidia-settings ntfs-3g lvm2
+
+
+printf "\n${red}--- Generate Fstab  ---\n\n${nc}"
+
+genfstab -U /mnt > /mnt/etc/fstab
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/
+cp $DIR/data/pacman.conf /mnt/etc
+arch-chroot /mnt /bin/bash << EOT
+sed -i s/,subvol=.*[[:punct:],a-z]//g /etc/fstab
+
+
+printf "\n${red}--- Set time and language ---\n\n${nc}"
+
+ln -sf /usr/share/zoneinfo/$tz /etc/localtime
+hwclock --systohc
+sed -i "s/^#*\(${locale}.UTF-8\s\+UTF-8\)/\1/" /etc/locale.gen
+echo "LANG=${locale}.UTF-8" > /etc/locale.conf
+locale-gen
+printf "\n${red}--- Change hostname ---\n\n${nc}"
+
+echo $hostname > /etc/hostname
+cat >> /etc/hosts << EOF
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	${hostname}.localdomain	${hostname}
+EOF
+
+printf "\n${red}--- Set Root password ---\n\n${nc}"
+
+echo "root:${rootpasswd}" | chpasswd
+
+printf "\n${red}--- Install Grub ---\n\n${nc}"
+
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
+grub-mkconfig -o /boot/grub/grub.cfg
+
+printf "\n${red}--- Enable services ---\n\n${nc}"
+
+systemctl enable NetworkManager
+systemctl enable sshd
+systemctl enable gdm
+
+printf "\n${red}--- Add user and set password ---\n\n${nc}"
+
+useradd -mG wheel $user
+sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+ALL\)/\1/' /etc/sudoers
+echo "${user}:${userpasswd}" | chpasswd
+pacman -Syu --noconfirm
+EOT
+
+printf "\n${red}--- Finish. You can reboot now ---\n\n${nc}"

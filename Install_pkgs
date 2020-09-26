@@ -1,0 +1,11 @@
+#!/bin/bash
+red='\033[1;31m'
+nc='\033[0m'
+PKGS=(chromium vlc audacity blender gimp krita inkscape gnome-tweak-tool dconf-editor shotwell obs-studio neofetch cmatrix firefox mpv htop git curl wget apache cups hplip cmake wine winetricks lib32-nvidia-utils zsh zsh-completions gparted xfsprogs exfat-utils glibc python jre-openjdk openssh gnome-software-packagekit-plugin mesa thunderbird)
+printf "\n\n${red}--- Installing packages ---\n\n${nc}"
+
+for PKG in "${PKGS[@]}"; do
+pacman -S --noconfirm --needed $PKG
+done
+
+printf "\n\n${red}--- Done. ---\n\n${nc}"
