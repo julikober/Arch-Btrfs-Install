@@ -21,7 +21,7 @@ pacman -S --noconfirm reflector
 reflector --sort rate | sed -n 1,20p - > /etc/pacman.d/mirrorlist
 
 printf "\n${red}--- Installing the base system ---\n\n${nc}"
-pacstrap /mnt base linux linux-firmware nano efibootmgr grub grub-btrfs networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers reflector cron gdm xorg gnome nvidia nvidia-utils nvidia-settings ntfs-3g lvm2
+pacstrap /mnt base linux linux-firmware nano efibootmgr grub grub-btrfs networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers reflector cron gdm xorg gnome nvidia nvidia-utils nvidia-settings ntfs-3g lvm2 htop git curl wget xfsprogs exfat-utils glibc udftools neofetch cmake python mesa 
 
 
 printf "\n${red}--- Generate Fstab  ---\n\n${nc}"
@@ -61,7 +61,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 printf "\n${red}--- Enable services ---\n\n${nc}"
 
 systemctl enable NetworkManager
-systemctl enable sshd
 systemctl enable gdm
 
 printf "\n${red}--- Add user and set password ---\n\n${nc}"
