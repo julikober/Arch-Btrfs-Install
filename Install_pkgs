@@ -17,5 +17,7 @@ printf "\n\n${red}--- Download pikaur and yaru ---\n\n${nc}"
 
 git clone https://aur.archlinux.org/pikaur.git
 git clone https://aur.archlinux.org/yaru.git
+chmod -R 777 yaru
+chmod -R 777 pikaur
 
 printf "\n\n${red}--- Done. ---\n\n${nc}"
