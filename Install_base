@@ -14,7 +14,7 @@ printf "\nType in your Username: "
 read user
 printf "Type in ${user}'s password: "
 read -s userpasswd
-printf "Type in location of homedirectory: "
+printf "\nType in location of homedirectory: "
 read homedir
 
 printf "\n\n${red}--- Get fastest servers ---\n\n${nc}"
@@ -67,8 +67,8 @@ systemctl enable NetworkManager
 systemctl enable gdm
 
 printf "\n${red}--- Add user and set password ---\n\n${nc}"
-
-useradd -mG wheel -d $homedir $user
+sed -i 's!/home!${homedir}!g' /etc/default/useradd
+useradd -mG wheel $user
 sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+ALL\)/\1/' /etc/sudoers
 echo "${user}:${userpasswd}" | chpasswd
 pacman -Syu --noconfirm
