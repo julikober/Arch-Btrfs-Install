@@ -7,6 +7,8 @@ printf "\n\n${red}--- Installing packages ---\n\n${nc}"
 for PKG in "${PKGS[@]}"; do
 pacman -S --noconfirm --needed $PKG
 done
+echo -e "[Desktop Entry]\nHidden=true" > /tmp/1
+find /usr -name "*lsp_plug*desktop" 2>/dev/null | cut -f 5 -d '/' | xargs -I {} cp /tmp/1 ~/.local/share/applications/{}
 printf "\n\n${red}--- Enable services ---\n\n${nc}"
 
 systemctl enable sshd
