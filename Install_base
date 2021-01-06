@@ -14,14 +14,12 @@ printf "\nType in your Username: "
 read user
 printf "Type in ${user}'s password: "
 read -s userpasswd
-printf "\nType in location of homedirectory: "
-read homedir
 
 printf "\n\n${red}--- Get fastest servers ---\n\n${nc}"
 
 pacman -Sy --noconfirm archlinux-keyring
 pacman -S --noconfirm reflector
-reflector --sort rate | sed -n 1,20p - > /etc/pacman.d/mirrorlist
+reflector --sort rate -l 20 > /etc/pacman.d/mirrorlist
 
 printf "\n${red}--- Installing the base system ---\n\n${nc}"
 pacstrap /mnt base linux linux-firmware nano efibootmgr grub grub-btrfs networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers reflector cron gdm xorg gnome nvidia nvidia-utils nvidia-settings ntfs-3g lvm2 htop git curl wget xfsprogs exfat-utils glibc udftools neofetch cmake python mesa 
@@ -33,7 +31,6 @@ genfstab -U /mnt > /mnt/etc/fstab
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/
 cp $DIR/data/pacman.conf /mnt/etc
 arch-chroot /mnt /bin/bash << EOT
-sed -i s/,subvol=.*[[:punct:],a-z]//g /etc/fstab
 
 
 printf "\n${red}--- Set time and language ---\n\n${nc}"
@@ -67,7 +64,6 @@ systemctl enable NetworkManager
 systemctl enable gdm
 
 printf "\n${red}--- Add user and set password ---\n\n${nc}"
-sed -i 's!/home!${homedir}!g' /etc/default/useradd
 useradd -mG wheel $user
 sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+ALL\)/\1/' /etc/sudoers
 echo "${user}:${userpasswd}" | chpasswd

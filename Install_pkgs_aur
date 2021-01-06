@@ -1,7 +1,7 @@
 #!/bin/bash
 red='\033[1;31m'
 nc='\033[0m'
-PKGS_Aur=(wps-office spotify timeshift timeshift-autosnap gnome-shell-extension-dash-to-dock-git gnome-shell-extension-desktop-icons-ng davinci-resolve eclipse-common eclipse-java whatsapp-nativefier-dark ttf-ms-fonts all-repository-fonts visual-studio-code-bin)
+PKGS_Aur=(wps-office preload spotify timeshift timeshift-autosnap gnome-shell-extension-dash-to-dock-git gnome-shell-extension-desktop-icons-ng whatsapp-nativefier-dark ttf-ms-fonts all-repository-fonts visual-studio-code-bin)
 printf "\n${red}--- Installing packages from the AUR  ---\n\n${nc}"
 cd ./pikaur
 makepkg -si --noconfirm
